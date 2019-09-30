@@ -43,10 +43,6 @@ PetitFS licence:
 /
 /-----------------------------------------------------------------------------/
 
-
----------------------------------------------------------------------------------
-
-
 CHANGELOG:
 
 
@@ -66,94 +62,6 @@ Z80-MBC2-ATMEL1284 Forked from S220718-R280819 - new project.  Changed register 
                    Improved readability.
 
 --------------------------------------------------------------------------------- */
-
-// ------------------------------------------------------------------------------
-//
-// Hardware definitions for A040618 (Z80-MBC2) - Base system
-//
-// ------------------------------------------------------------------------------
-
-#define   D0            24    // PA0 pin 40   Z80 data bus
-#define   D1            25    // PA1 pin 39
-#define   D2            26    // PA2 pin 38
-#define   D3            27    // PA3 pin 37
-#define   D4            28    // PA4 pin 36
-#define   D5            29    // PA5 pin 35
-#define   D6            30    // PA6 pin 34
-#define   D7            31    // PA7 pin 33
-
-#define   AD0           18    // PC2 pin 24   Z80 A0
-#define   WR_           19    // PC3 pin 25   Z80 WR
-#define   RD_           20    // PC4 pin 26   Z80 RD
-#define   MREQ_         21    // PC5 pin 27   Z80 MREQ
-#define   RESET_        22    // PC6 pin 28   Z80 RESET
-#define   MCU_RTS_      23    // PC7 pin 29   * RESERVED - NOT USED *
-#define   MCU_CTS_      10    // PD2 pin 16   * RESERVED - NOT USED *
-#define   BANK1         11    // PD3 pin 17   RAM Memory bank address (High)
-#define   BANK0         12    // PD4 pin 18   RAM Memory bank address (Low)
-#define   INT_           1    // PB1 pin 2    Z80 control bus
-#define   RAM_CE2        2    // PB2 pin 3    RAM Chip Enable (CE2). Active HIGH. Used only during boot
-#define   WAIT_          3    // PB3 pin 4    Z80 WAIT
-#define   SS_            4    // PB4 pin 5    SD SPI
-#define   MOSI           5    // PB5 pin 6    SD SPI
-#define   MISO           6    // PB6 pin 7    SD SPI
-#define   SCK            7    // PB7 pin 8    SD SPI
-#define   BUSREQ_       14    // PD6 pin 20   Z80 BUSRQ
-#define   CLK           15    // PD7 pin 21   Z80 CLK
-#define   SCL_PC0       16    // PC0 pin 22   IOEXP connector (I2C)
-#define   SDA_PC1       17    // PC1 pin 23   IOEXP connector (I2C)
-#define   LED_IOS        0    // PB0 pin 1    Led LED_IOS is ON if HIGH
-#define   WAIT_RES_      0    // PB0 pin 1    Reset the Wait FF
-#define   USER          13    // PD5 pin 19   Led USER and key (led USER is ON if LOW)
-
-
-// ------------------------------------------------------------------------------
-//
-// Hardware definitions for A040618 GPE Option (Optional GPIO Expander)
-//
-// ------------------------------------------------------------------------------
-
-#define   GPIOEXP_ADDR  0x20  // I2C module address (see datasheet)
-#define   IODIRA_REG    0x00  // MCP23017 internal register IODIRA  (see datasheet)
-#define   IODIRB_REG    0x01  // MCP23017 internal register IODIRB  (see datasheet)
-#define   GPPUA_REG     0x0C  // MCP23017 internal register GPPUA  (see datasheet)
-#define   GPPUB_REG     0x0D  // MCP23017 internal register GPPUB  (see datasheet)
-#define   GPIOA_REG     0x12  // MCP23017 internal register GPIOA  (see datasheet)
-#define   GPIOB_REG     0x13  // MCP23017 internal register GPIOB  (see datasheet)
-
-// ------------------------------------------------------------------------------
-//
-// Hardware definitions for A040618 RTC Module Option (see DS3231 datasheet)
-//
-// ------------------------------------------------------------------------------
-
-#define   DS3231_RTC    0x68  // DS3231 I2C address
-#define   DS3231_SECRG  0x00  // DS3231 Seconds Register
-#define   DS3231_STATRG 0x0F  // DS3231 Status Register
-
-// ------------------------------------------------------------------------------
-//
-// File names and starting addresses
-//
-// ------------------------------------------------------------------------------
-
-#define   BASICFN       "BASIC47.BIN"
-#define   FORTHFN       "FORTH13.BIN"
-#define   CPMFN         "CPM22.BIN"
-#define   QPMFN         "QPMLDR.BIN"
-#define   CPM3FN        "CPMLDR.COM"      // CP/M 3 CPMLDR.COM loader
-#define   UCSDFN        "UCSDLDR.BIN"     // UCSD Pascal loader
-#define   AUTOFN        "AUTOBOOT.BIN"
-#define   Z80DISK       "DSxNyy.DSK"      // Generic Z80 disk name (from DS0N00.DSK to DS9N99.DSK)
-#define   DS_OSNAME     "DSxNAM.DAT"      // File with the OS name for Disk Set "x" (from DS0NAM.DAT to DS9NAM.DAT)
-#define   BASSTRADDR    0x0000            // Starting address for the stand-alone Basic interptreter
-#define   FORSTRADDR    0x0100            // Starting address for the stand-alone Forth interptreter
-#define   CPM22CBASE    0xD200            // CBASE value for CP/M 2.2
-#define   CPMSTRADDR    (CPM22CBASE - 32) // Starting address for CP/M 2.2
-#define   QPMSTRADDR    0x80              // Starting address for the QP/M 2.71 loader
-#define   CPM3STRADDR   0x100             // Starting address for the CP/M 3 loader
-#define   UCSDSTRADDR   0x0000            // Starting address for the UCSD Pascal loader
-#define   AUTSTRADDR    0x0000            // Starting address for the AUTOBOOT.BIN file
 
 // ------------------------------------------------------------------------------
 //
@@ -178,21 +86,22 @@ Z80-MBC2-ATMEL1284 Forked from S220718-R280819 - new project.  Changed register 
 #include <avr/pgmspace.h>                 // Needed for PROGMEM
 #include "Wire.h"                         // Needed for I2C bus
 #include <EEPROM.h>                       // Needed for internal EEPROM R/W
-#include "PetitFS.h"                      // Light handler for FAT16 and FAT32 filesystems on SD
+#include "PetitFS.h"                      // Light handler for FAT16 and FAT32 filesystem on SD
+#include "DefinitionsFile.h"
+#include "Monitor.h"                      // provide "monitor" functionality, assembler(A XXXX), 
+                                          // dump(D XXXX), dissasssembler(U XXXX<,NUM_INSTRUCTIONS>), 
+                                          // enter XXXX 
+#include "RealTimeClock.h"
+#include "Generic.h"
+#include "SdCardFunctions.h"
+
+
 
 // ------------------------------------------------------------------------------
 //
 //  Constants
 //
 // ------------------------------------------------------------------------------
-
-const byte    LD_HL        =  0x36;       // Opcode of the Z80 instruction: LD(HL), n
-const byte    INC_HL       =  0x23;       // Opcode of the Z80 instruction: INC HL
-const byte    LD_HLnn      =  0x21;       // Opcode of the Z80 instruction: LD HL, nn
-const byte    JP_nn        =  0xC3;       // Opcode of the Z80 instruction: JP nn
-const String  compTimeStr  = __TIME__;    // Compile timestamp string
-const String  compDateStr  = __DATE__;    // Compile datestamp string
-const byte    daysOfMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 const byte    debug        = 0;           // Debug off = 0, on = 1, on = 2 with interrupt trace
 const byte    bootModeAddr = 10;          // Internal EEPROM address for boot mode storage
 const byte    autoexecFlagAddr = 12;      // Internal EEPROM address for AUTOEXEC flag storage
@@ -245,7 +154,10 @@ const byte  boot_A_[] PROGMEM = {         // Payload A image (S200718 iLoad)
     0x2E, 0xFF, 0x78, 0xCD, 0x2E, 0xFF, 0xC1, 0xF1, 0xC9, 0xF5, 0x3E, 0x01, 0xD3, 0x01, 0xF1, 0xD3, 
     0x00, 0xC9, 0xDB, 0x01, 0xFE, 0xFF, 0xCA, 0x72, 0xFF, 0xC9 };
 
-const byte * const flahBootTable[1] PROGMEM = {boot_A_}; // Payload pointers table (flash)
+const byte * const flashBootTable[1] PROGMEM = {boot_A_}; // Payload pointers table (flash)
+
+/* internal Strings */
+const String *SD_ERROR_RETRY  = new String("IOS: Check SD and press a key to repeat\r\n");
 
 // ------------------------------------------------------------------------------
 //
@@ -258,44 +170,17 @@ byte          ioAddress;                  // Virtual I/O address. Only two possi
 byte          ioData;                     // Data byte used for the I/O operation
 byte          ioOpcode       = 0xFF;      // I/O operation code or Opcode (0xFF means "No Operation")
 word          ioByteCnt;                  // Exchanged bytes counter during an I/O operation
-byte          tempByte;                   // Temporary variable (buffer)
 byte          moduleGPIO     = 0;         // Set to 1 if the module is found, 0 otherwise
 byte          bootMode       = 0;         // Set the program to boot (from flash or SD)
 byte *        BootImage;                  // Pointer to selected flash payload array (image) to boot
 word          BootImageSize  = 0;         // Size of the selected flash payload array (image) to boot
 word          BootStrAddr;                // Starting address of the selected program to boot (from flash or SD)
-byte          Z80IntEnFlag   = 0;         // Z80 INT_ enable flag (0 = No INT_ used, 1 = INT_ used for I/O)
-unsigned long timeStamp;                  // Timestamp for led blinking
-char          inChar;                     // Input char from serial
+
 byte          iCount;                     // Temporary variable (counter)
 byte          clockMode;                  // Z80 clock HI/LO speed selector (0 = 8/10MHz, 1 = 4/5MHz)
 byte          LastRxIsEmpty;              // "Last Rx char was empty" flag. Is set when a serial Rx operation was done
                                           // when the Rx buffer was empty
-
-// DS3231 RTC variables
-byte          foundRTC;                   // Set to 1 if RTC is found, 0 otherwise
-byte          seconds, minutes, hours, day, month, year;
-byte          tempC;                      // Temperature (Celsius) encoded in two’s complement integer format
-
-// SD disk and CP/M support variables
-FATFS         filesysSD;                  // Filesystem object (PetitFS library)
-byte          bufferSD[32];               // I/O buffer for SD disk operations (store a "segment" of a SD sector).
-                                          //  Each SD sector (512 bytes) is divided into 16 segments (32 bytes each)
-const char *  fileNameSD;                 // Pointer to the string with the currently used file name
-byte          autobootFlag;               // Set to 1 if "autoboot.bin" must be executed at boot, 0 otherwise
-byte          autoexecFlag;               // Set to 1 if AUTOEXEC must be executed at CP/M cold boot, 0 otherwise
-byte          errCodeSD;                  // Temporary variable to store error codes from the PetitFS
-byte          numReadBytes;               // Number of read bytes after a readSD() call
-
-// Disk emulation on SD
-char          diskName[11]    = Z80DISK;  // String used for virtual disk file name
-char          OsName[11]      = DS_OSNAME;// String used for file holding the OS name
-word          trackSel;                   // Store the current track number [0..511]
-byte          sectSel;                    // Store the current sector number [0..31]
-byte          diskErr         = 19;       // SELDISK, SELSECT, SELTRACK, WRITESECT, READSECT or SDMOUNT resulting 
-                                          //  error code
-byte          numWriBytes;                // Number of written bytes after a writeSD() call
-byte          diskSet;                    // Current "Disk Set"
+byte          tempByte;
 
 // ------------------------------------------------------------------------------
 
@@ -451,7 +336,7 @@ void setup()
             Serial.read();
         }
         Serial.println();
-        Serial.println(F("IOS: Select boot mode or system parameters:"));
+        Serial.println(F("MIOS: Select boot mode or system parameters:"));
         Serial.println();
         
         // Previous valid boot mode read, so enable '0' selection    
@@ -479,6 +364,8 @@ void setup()
         Serial.print(" 8: Change ");
         printOsName(diskSet);
         Serial.println();
+        Serial.println(" M: Start Monitor" );
+        
 
         // If RTC module is present add a menu choice
         if (foundRTC)
@@ -495,12 +382,13 @@ void setup()
         {
             blinkIOSled(&timeStamp);
             inChar = Serial.read();
+            if ( inChar == 'M' ) break;
         } while ((inChar < minBootChar) || (inChar > maxSelChar));
         
         Serial.print(inChar);
         Serial.println("  Ok");
 
-        // Make the selected action for the system paramters choice
+        // Make the selected action for the system parameters choice
         switch (inChar)
         {
             case '6':                                   // Change the clock speed of the Z80 CPU
@@ -509,7 +397,7 @@ void setup()
                 break;
 
             case '7':                                   // Toggle CP/M AUTOEXEC execution on cold boot
-                autoexecFlag = !autoexecFlag;             // Toggle AUTOEXEC executiont status
+                autoexecFlag = !autoexecFlag;             // Toggle AUTOEXEC execution status
                 EEPROM.update(autoexecFlagAddr, autoexecFlag); // Save it to the internal EEPROM
                 break;
 
@@ -548,9 +436,14 @@ void setup()
             case '9':                                   // Change RTC Date/Time
                 ChangeRTC();                              // Change RTC Date/Time if requested
                 break;
+
+            case 'm':
+            case 'M':
+                monitor();
+                break;
         } // switch
     
-        // Save selectd boot program if changed
+        // Save selected boot program if changed
         bootMode = inChar - '1';                      // Calculate bootMode from inChar
         if (bootMode <= maxBootMode) 
         {
@@ -580,7 +473,7 @@ void setup()
         case 0:                                       // Load Basic from SD
             fileNameSD = BASICFN;
             BootStrAddr = BASSTRADDR;
-            Z80IntEnFlag = 1;                           // Enable INT_ signal generation (Z80 M1 INT I/O)
+            Z80IntEnFlag = 1;                         // Enable INT_ signal generation (Z80 M1 INT I/O)
             break;
     
         case 1:                                       // Load Forth from SD
@@ -591,35 +484,35 @@ void setup()
         case 2:                                       // Load an OS from current Disk Set on SD
             switch (diskSet)
             {
-                case 0:                                     // CP/M 2.2
+                case 0:                               // CP/M 2.2
                     fileNameSD = CPMFN;
                     BootStrAddr = CPMSTRADDR;
                     break;
 
-                    case 1:                                     // QP/M 2.71
+                case 1:                               // QP/M 2.71
                     fileNameSD = QPMFN;
                     BootStrAddr = QPMSTRADDR;
                     break;
 
-                    case 2:                                     // CP/M 3.0
+                case 2:                               // CP/M 3.0
                     fileNameSD = CPM3FN;
                     BootStrAddr = CPM3STRADDR;
                     break;
 
-                    case 3:                                     // UCSD Pascal
+                case 3:                               // UCSD Pascal
                     fileNameSD = UCSDFN;
                     BootStrAddr = UCSDSTRADDR;
                     break;
             }
             break;
     
-            case 3:                                       // Load AUTOBOOT.BIN from SD (load an user executable binary file)
+            case 3:                                   // Load AUTOBOOT.BIN from SD (load an user executable binary file)
                 fileNameSD = AUTOFN;
                 BootStrAddr = AUTSTRADDR;
                 break;
     
-            case 4:                                       // Load iLoad from flash
-                BootImage = (byte *) pgm_read_word (&flahBootTable[0]); 
+            case 4:                                   // Load iLoad from flash
+                BootImage = (byte *) pgm_read_word (&flashBootTable[0]); 
                 BootImageSize = sizeof(boot_A_);
                 BootStrAddr = boot_A_StrAddr;
                 break;
@@ -631,10 +524,10 @@ void setup()
     if (BootStrAddr > 0x0000)                       // Check if the boot program starting addr > 0x0000
     {
         // Inject a "JP <BootStrAddr>" instruction to jump at boot starting address
-        loadHL(0x0000);                               // HL = 0x0000 (used as pointer to RAM)
-        loadByteToRAM(JP_nn);                         // Write the JP opcode @ 0x0000;
-        loadByteToRAM(lowByte(BootStrAddr));          // Write LSB to jump @ 0x0001
-        loadByteToRAM(highByte(BootStrAddr));         // Write MSB to jump @ 0x0002
+        loadHL(0x0000);                             // HL = 0x0000 (used as pointer to RAM)
+        writeByteToRAM(JP_nn);                       // Write the JP opcode @ 0x0000;
+        writeByteToRAM(lowByte(BootStrAddr));        // Write LSB to jump @ 0x0001
+        writeByteToRAM(highByte(BootStrAddr));       // Write MSB to jump @ 0x0002
         //
         // DEBUG ----------------------------------
         if (debug)
@@ -674,7 +567,7 @@ void setup()
                 do
                 {
                     printErrSD(0, errCodeSD, NULL);
-                    waitKey();                                // Wait a key to repeat
+                    waitKey(SD_ERROR_RETRY);                                // Wait a key to repeat
                     mountSD(&filesysSD);                      // New double try
                     errCodeSD = mountSD(&filesysSD);
                 } while (errCodeSD);
@@ -689,7 +582,7 @@ void setup()
             do
             {
                 printErrSD(1, errCodeSD, fileNameSD);
-                waitKey();                                  // Wait a key to repeat
+                waitKey(SD_ERROR_RETRY);                                  // Wait a key to repeat
                 errCodeSD = openSD(fileNameSD);
                 if (errCodeSD != 3)
                 {
@@ -717,14 +610,14 @@ void setup()
                 // Load the read "segment" into RAM
                 for (iCount = 0; iCount < numReadBytes; iCount++)
                 {
-                    loadByteToRAM(bufferSD[iCount]);        // Write current data byte into RAM
+                    writeByteToRAM(bufferSD[iCount]);        // Write current data byte into RAM
                 }
             } while ((numReadBytes == 32) && (!errCodeSD));   // If numReadBytes < 32 -> EOF reached
             
             if (errCodeSD)
             {
                 printErrSD(2, errCodeSD, fileNameSD);
-                waitKey();                                // Wait a key to repeat
+                waitKey(SD_ERROR_RETRY);                  // Wait a key to repeat
                 seekSD(0);                                // Reset the sector pointer
             }
         } while (errCodeSD);
@@ -736,7 +629,7 @@ void setup()
         // Write boot program into external RAM
         for (word i = 0; i < BootImageSize; i++)
         {
-            loadByteToRAM(pgm_read_byte(BootImage + i));  // Write current data byte into RAM
+            writeByteToRAM(pgm_read_byte(BootImage + i));  // Write current data byte into RAM
         }
     }
     
@@ -748,13 +641,13 @@ void setup()
     digitalWrite(RESET_, LOW);              // Activate the RESET_ signal
 
     // Initialize CLK @ 4/8MHz (@ Fosc = 16MHz). Z80 clock_freq = (Atmega_clock) / ((OCR2 + 1) * 2)
-    ASSR &= ~(1 << AS2);                    // Set Timer2 clock from system clock
-    TCCR2B |= (1 << CS20);                  // Set Timer2 clock to "no prescaling"
+    ASSR &=    ~(1 << AS2);                 // Set Timer2 clock from system clock
+    TCCR2B |=   (1 << CS20);                // Set Timer2 clock to "no prescaling"
     TCCR2B &= ~((1 << CS21) | (1 << CS22));
-    TCCR2A |= (1 << WGM21);                 // Set Timer2 CTC mode
-    TCCR2A &= ~(1 << WGM20);
-    TCCR2A |= (1 <<  COM2A0);               // Set "toggle OC2 on compare match"
-    TCCR2A &= ~(1 << COM2A1);
+    TCCR2A |=   (1 << WGM21);               // Set Timer2 CTC mode
+    TCCR2A &=  ~(1 << WGM20);
+    TCCR2A |=   (1 << COM2A0);              // Set "toggle OC2 on compare match"
+    TCCR2A &=  ~(1 << COM2A1);
     OCR2A = clockMode;                      // Set the compare value to toggle OC2 (0 = low or 1 = high)
     pinMode(CLK, OUTPUT);                   // Set OC2 as output and start to output the clock
     
@@ -778,7 +671,7 @@ void setup()
 void loop() 
 {
     if (!digitalRead(WAIT_))
-    { // I/O operaton requested
+    { // I/O operation requested
         if (!digitalRead(WR_))
         {// I/O WRITE operation requested
             // ----------------------------------------
@@ -976,10 +869,10 @@ void loop()
                     //                             D7 D6 D5 D4 D3 D2 D1 D0    DISK number (binary) [0..99]
                     //
                     //
-                    // Opens the "disk file" correspondig to the selected disk number, doing some checks.
+                    // Opens the "disk file" corresponding to the selected disk number, doing some checks.
                     // A "disk file" is a binary file that emulates a disk using a LBA-like logical sector number.
                     // Every "disk file" must have a dimension of 8388608 bytes, corresponding to 16384 LBA-like logical sectors
-                    //  (each sector is 512 bytes long), correspinding to 512 tracks of 32 sectors each (see SELTRACK and 
+                    //  (each sector is 512 bytes long), corresponding to 512 tracks of 32 sectors each (see SELTRACK and 
                     //  SELSECT opcodes).
                     // Errors are stored into "errDisk" (see ERRDISK opcode).
                     //
@@ -988,7 +881,7 @@ void loop()
                     //
                     // "Disk file" filename convention:
                     //
-                    // Every "disk file" must follow the sintax "DSsNnn.DSK" where
+                    // Every "disk file" must follow the syntax "DSsNnn.DSK" where
                     //
                     //    "s" is the "disk set" and must be in the [0..9] range (always one numeric ASCII character)
                     //    "nn" is the "disk number" and must be in the [00..99] range (always two numeric ASCII characters)
@@ -1556,7 +1449,7 @@ void loop()
                     //
                     //
                     // NOTE 1: This opcode is "normally" not used. Only needed if using a virtual disk from a custom program
-                    //         loaded with iLoad or with the Autoboot mode (e.g. ViDiT). Can be used to handle SD hot-swapping
+                    //         loaded with iLoad or with the Auto-boot mode (e.g. ViDiT). Can be used to handle SD hot-swapping
                     // NOTE 2: For error codes explanation see ERRDISK opcode
                     // NOTE 3: Only for this disk opcode, the resulting error is read as a data byte without using the 
                     //         ERRDISK opcode
@@ -1609,692 +1502,5 @@ void loop()
         }
     }
 } // end of loop
-
-
-
-// ------------------------------------------------------------------------------
-
-// Generic routines
-
-// ------------------------------------------------------------------------------
-void printBinaryByte(byte value)
-{
-    for (byte mask = 0x80; mask; mask >>= 1)
-    {
-        Serial.print((mask & value) ? '1' : '0');
-    }
-}
-
-// ------------------------------------------------------------------------------
-// Set INT_ to ACTIVE if there are received chars from serial to read and if 
-// the interrupt generation is enabled
-// ------------------------------------------------------------------------------
-void serialEvent()
-{
-    if ((Serial.available()) && Z80IntEnFlag) 
-    {
-        digitalWrite(INT_, LOW);
-    }
-}
-
-// ------------------------------------------------------------------------------
-// Blink led IOS using a timestamp
-// ------------------------------------------------------------------------------
-void blinkIOSled(unsigned long *timestamp)
-{
-    if ((millis() - *timestamp) > 200)
-    {
-        digitalWrite(LED_IOS,!digitalRead(LED_IOS));
-        *timestamp = millis();
-    }
-}
-
-
-// ------------------------------------------------------------------------------
-// RTC Module routines
-// ------------------------------------------------------------------------------
-
-// ------------------------------------------------------------------------------
-// Convert a binary byte to a two digits BCD byte
-// ------------------------------------------------------------------------------
-byte decToBcd(byte val)
-{
-    return( (val/10*16) + (val%10) );
-}
-
-// ------------------------------------------------------------------------------
-// Convert binary coded decimal to normal decimal numbers
-// ------------------------------------------------------------------------------
-byte bcdToDec(byte val)
-{
-    return( (val/16*10) + (val%16) );
-}
-
-// ------------------------------------------------------------------------------
-// Read current date/time binary values and the temprerature (2 complement) from the DS3231 RTC
-// ------------------------------------------------------------------------------
-void readRTC(byte *second, byte *minute, byte *hour, byte *day, byte *month, byte *year, byte *tempC)
-{
-    byte    i;
-    Wire.beginTransmission(DS3231_RTC);
-    Wire.write(DS3231_SECRG);                       // Set the DS3231 Seconds Register
-    Wire.endTransmission();
-    // Read from RTC and convert to binary
-    Wire.requestFrom(DS3231_RTC, 18);
-    *second = bcdToDec(Wire.read() & 0x7f);
-    *minute = bcdToDec(Wire.read());
-    *hour = bcdToDec(Wire.read() & 0x3f);
-    Wire.read();                                    // Jump over the DoW
-    *day = bcdToDec(Wire.read());
-    *month = bcdToDec(Wire.read());
-    *year = bcdToDec(Wire.read());
-    for (i = 0; i < 10; i++) 
-    {
-        Wire.read();           // Jump over 10 registers
-    }
-    *tempC = Wire.read();
-}
-
-// ------------------------------------------------------------------------------
-// Write given date/time binary values to the DS3231 RTC
-// ------------------------------------------------------------------------------
-void writeRTC(byte second, byte minute, byte hour, byte day, byte month, byte year)
-{
-    Wire.beginTransmission(DS3231_RTC);
-    Wire.write(DS3231_SECRG);                       // Set the DS3231 Seconds Register
-    Wire.write(decToBcd(second));
-    Wire.write(decToBcd(minute));
-    Wire.write(decToBcd(hour));
-    Wire.write(1);                                  // Day of week not used (always set to 1 = Sunday)
-    Wire.write(decToBcd(day));
-    Wire.write(decToBcd(month));
-    Wire.write(decToBcd(year));
-    Wire.endTransmission();
-}
-
-// ------------------------------------------------------------------------------
-// Check if the DS3231 RTC is present and set the date/time at compile date/time if 
-// the RTC "Oscillator Stop Flag" is set (= date/time failure).
-// Return value: 0 if RTC not present, 1 if found.
-// ------------------------------------------------------------------------------
-byte autoSetRTC()
-{
-    byte    OscStopFlag;
-
-    Wire.beginTransmission(DS3231_RTC);
-    if (Wire.endTransmission() != 0)
-    {
-        return 0;      // RTC not found
-    }
-    Serial.print("IOS: Found RTC DS3231 Module (");
-    printDateTime(1);
-    Serial.println(")");
-
-    // Print the temperaturefrom the RTC sensor
-    Serial.print("IOS: RTC DS3231 temperature sensor: ");
-    Serial.print((int8_t)tempC);
-    Serial.println("C");
-  
-    // Read the "Oscillator Stop Flag"
-    Wire.beginTransmission(DS3231_RTC);
-    Wire.write(DS3231_STATRG);                      // Set the DS3231 Status Register
-    Wire.endTransmission();
-    Wire.requestFrom(DS3231_RTC, 1);
-    OscStopFlag = Wire.read() & 0x80;               // Read the "Oscillator Stop Flag"
-
-    if (OscStopFlag)
-    {
-        // RTC oscillator stopped. RTC must be set at compile date/time
-        // Convert compile time strings to numeric values
-        seconds = compTimeStr.substring(6,8).toInt();
-        minutes = compTimeStr.substring(3,5).toInt();
-        hours = compTimeStr.substring(0,2).toInt();
-        day = compDateStr.substring(4,6).toInt();
-        switch (compDateStr[0]) 
-        {
-            case 'J': month = compDateStr[1] == 'a' ? 1 : month = compDateStr[2] == 'n' ? 6 : 7; break;
-            case 'F': month = 2; break;
-            case 'A': month = compDateStr[2] == 'r' ? 4 : 8; break;
-            case 'M': month = compDateStr[2] == 'r' ? 3 : 5; break;
-            case 'S': month = 9; break;
-            case 'O': month = 10; break;
-            case 'N': month = 11; break;
-            case 'D': month = 12; break;
-        } // switch
-        year = compDateStr.substring(9,11).toInt();
-
-        // Ask for RTC setting al compile date/time
-        Serial.println("IOS: RTC clock failure!");
-        Serial.print("\nDo you want set RTC at IOS compile time (");
-        printDateTime(0);
-        Serial.print(")? [Y/N] >");
-        timeStamp = millis();
-        do
-        {
-            blinkIOSled(&timeStamp);
-            inChar = Serial.read();
-        } while ((inChar != 'y') && (inChar != 'Y') && (inChar != 'n') &&(inChar != 'N'));
-        Serial.println(inChar);
- 
-        // Set the RTC at the compile date/time and print a message
-        if ((inChar == 'y') || (inChar == 'Y'))
-        {
-            writeRTC(seconds, minutes, hours, day, month, year);
-            Serial.print("IOS: RTC set at compile time - Now: ");
-            printDateTime(1);
-            Serial.println();
-        }
-
-        // Reset the "Oscillator Stop Flag" 
-        Wire.beginTransmission(DS3231_RTC);
-        Wire.write(DS3231_STATRG);                    // Set the DS3231 Status Register
-        Wire.write(0x08);                             // Reset the "Oscillator Stop Flag" (32KHz output left enabled)
-        Wire.endTransmission();
-    }
-    return 1;
-}
-
-// ------------------------------------------------------------------------------
-// Print to serial the current date/time from the global variables.
-//
-// Flag readSourceFlag [0..1] usage:
-//    If readSourceFlag = 0 the RTC read is not done
-//    If readSourceFlag = 1 the RTC read is done (global variables are updated)
-// ------------------------------------------------------------------------------
-void printDateTime(byte readSourceFlag)
-{
-    if (readSourceFlag) 
-    {
-        readRTC(&seconds, &minutes, &hours, &day,  &month,  &year, &tempC);
-    }
-    print2digit(day);
-    Serial.print("/");
-    print2digit(month);
-    Serial.print("/");
-    print2digit(year);
-    Serial.print(" ");
-    print2digit(hours);
-    Serial.print(":");
-    print2digit(minutes);
-    Serial.print(":");
-    print2digit(seconds);
-}
-
-// ------------------------------------------------------------------------------
-// Print a byte [0..99] using 2 digit with leading zeros if needed
-// ------------------------------------------------------------------------------
-void print2digit(byte data)
-{
-  if (data < 10) 
-  {
-      Serial.print("0");
-  }
-  Serial.print(data);
-}
-
-// ------------------------------------------------------------------------------
-// Check if the year 2000+XX (where XX is the argument yearXX [00..99]) is a leap year.
-// Returns 1 if it is leap, 0 otherwise.
-// This function works in the [2000..2099] years range. It should be enough...
-// ------------------------------------------------------------------------------
-byte isLeapYear(byte yearXX)
-{
-  if (((2000 + yearXX) % 4) == 0) return 1;
-  else return 0;
-}
-
-// ------------------------------------------------------------------------------
-// Change manually the RTC Date/Time from keyboard
-// ------------------------------------------------------------------------------
-void ChangeRTC()
-{
-    // Read RTC
-    readRTC(&seconds, &minutes, &hours, &day,  &month,  &year, &tempC);
-
-    // Change RTC date/time from keyboard
-    tempByte = 0;
-    Serial.println("\nIOS: RTC manual setting:");
-    Serial.println("\nPress T/U to increment +10/+1 or CR to accept");
-    do
-    {
-        do
-        {
-            Serial.print(" ");
-            switch (tempByte)
-            {
-                case 0:
-                    Serial.print("Year -> ");
-                    print2digit(year);
-                    break;
-        
-                case 1:
-                    Serial.print("Month -> ");
-                    print2digit(month);
-                    break;
-
-                case 2:
-                    Serial.print("             ");
-                    Serial.write(13);
-                    Serial.print(" Day -> ");
-                    print2digit(day);
-                    break;
-
-                case 3:
-                    Serial.print("Hours -> ");
-                    print2digit(hours);
-                    break;
-
-                case 4:
-                    Serial.print("Minutes -> ");
-                    print2digit(minutes);
-                    break;
-
-                case 5:
-                    Serial.print("Seconds -> ");
-                    print2digit(seconds);
-                    break;
-            } // switch
-
-            timeStamp = millis();
-            do
-            {
-                blinkIOSled(&timeStamp);
-                inChar = Serial.read();
-            } while ((inChar != 'u') && (inChar != 'U') && (inChar != 't') && (inChar != 'T') && (inChar != 13));
-      
-            if ((inChar == 'u') || (inChar == 'U'))
-            {
-                // Change units
-                switch (tempByte)
-                {
-                    case 0:
-                        year = (year == 99) ? 0 : year + 1;
-                        break;
-
-                    case 1:
-                        month = (month == 12) ? 1 : month + 1;
-                        break;
-
-                    case 2:
-                        day++;
-                        if (month == 2)
-                        {
-                            if (day > (daysOfMonth[month - 1] + isLeapYear(year))) 
-                            {
-                                day = 1;
-                            }
-                        }
-                        else
-                        {
-                            if (day > (daysOfMonth[month - 1])) 
-                            {
-                                day = 1;
-                            }
-                        }
-                        break;
-
-                    case 3:
-                        hours = ( hours == 23 ) ? 0 : hours + 1; 
-                        break;
-
-                    case 4:
-                        minutes = ( minutes == 59 ) ? 0 : minutes + 1; 
-                        break;
-
-                    case 5:
-                        seconds = ( seconds == 59 ) ? 0 : seconds + 1; 
-                        break;
-                } // switch
-            } // if
-        
-            if ((inChar == 't') || (inChar == 'T'))
-            {
-                // Change tens
-                switch (tempByte)
-                {
-                    case 0:
-                        year = year + 10;
-                        if (year > 99) 
-                        {
-                            year -= (year / 10) * 10; 
-                        }
-                        break;
-
-                    case 1:
-                        if (month > 10) 
-                        {
-                            month -= 10;
-                        }
-                        else if (month < 3) 
-                        {
-                            month += 10;
-                        }
-                        break;
-
-                    case 2:
-                        day += 10;
-                        if (day > (daysOfMonth[month - 1] + isLeapYear(year))) 
-                        {
-                            day -= (day / 10) * 10;
-                        }
-                        if (day == 0) 
-                        {
-                            day = 1;
-                        }
-                        break;
-
-                    case 3:
-                        hours += 10;
-                        if (hours > 23) 
-                        {
-                            hours -= (hours / 10 ) * 10;
-                        }
-                        break;
-
-                    case 4:
-                        minutes += 10;
-                        if (minutes > 59) 
-                        {
-                            minutes -= (minutes / 10 ) * 10;
-                        }
-                        break;
-
-                    case 5:
-                        seconds += 10;
-                        if (seconds > 59) 
-                        {
-                            seconds -= (seconds / 10 ) * 10;
-                        }
-                        break;
-                }
-            }
-            Serial.write(13);
-        } while (inChar != 13);
-        
-        tempByte++;
-    } while (tempByte < 6);  
-
-    // Write new date/time into the RTC
-    writeRTC(seconds, minutes, hours, day, month, year);
-    Serial.println(" ...done      ");
-    Serial.print("IOS: RTC date/time updated (");
-    printDateTime(1);
-    Serial.println(")");
-}
-
-
-// ------------------------------------------------------------------------------
-// Z80 bootstrap routines
-// ------------------------------------------------------------------------------
-
-
-// ------------------------------------------------------------------------------
-// Generate <numPulse> clock pulses on the Z80 clock pin.
-// The steady clock level is LOW, e.g. one clock pulse is a 0-1-0 transition
-// ------------------------------------------------------------------------------
-void pulseClock(byte numPulse)
-{
-    byte    i;
-    for (i = 0; i < numPulse; i++)
-    {
-        // Send one impulse (1-0) on the CLK output
-        digitalWrite(CLK, HIGH);
-        digitalWrite(CLK, LOW);
-    }
-}
-
-// ------------------------------------------------------------------------------
-// Load a given byte to RAM using a sequence of two Z80 instructions forced on the data bus.
-// The RAM_CE2 signal is used to force the RAM in HiZ, so the Atmega can write the needed instruction/data
-//  on the data bus. Controlling the clock signal and knowing exactly how many clocks pulse are required it 
-//  is possible control the whole loading process.
-// In the following "T" are the T-cycles of the Z80 (See the Z80 datashet).
-// The two instruction are "LD (HL), n" and "INC (HL)".
-// ------------------------------------------------------------------------------
-void loadByteToRAM(byte value)
-{ 
-    // Execute the LD(HL),n instruction (T = 4+3+3). See the Z80 datasheet and manual.
-    // After the execution of this instruction the <value> byte is loaded in the memory address pointed by HL.
-    pulseClock(1);                      // Execute the T1 cycle of M1 (Opcode Fetch machine cycle)
-    digitalWrite(RAM_CE2, LOW);         // Force the RAM in HiZ (CE2 = LOW)
-    DDRA = 0xFF;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as output
-    PORTA = LD_HL;                      // Write "LD (HL), n" opcode on data bus
-    pulseClock(2);                      // Execute T2 and T3 cycles of M1
-    DDRA = 0x00;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as input... 
-    PORTA = 0xFF;                       // ...with pull-up
-    pulseClock(2);                      // Complete the execution of M1 and execute the T1 cycle of the following 
-                                        // Memory Read machine cycle
-    DDRA = 0xFF;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as output
-    PORTA = value;                      // Write the byte to load in RAM on data bus
-    pulseClock(2);                      // Execute the T2 and T3 cycles of the Memory Read machine cycle
-    DDRA = 0x00;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as input... 
-    PORTA = 0xFF;                       // ...with pull-up
-    digitalWrite(RAM_CE2, HIGH);        // Enable the RAM again (CE2 = HIGH)
-    pulseClock(3);                      // Execute all the following Memory Write machine cycle
-
-    // Execute the INC(HL) instruction (T = 6). See the Z80 datasheet and manual.
-    // After the execution of this instruction HL points to the next memory address.
-    pulseClock(1);                      // Execute the T1 cycle of M1 (Opcode Fetch machine cycle)
-    digitalWrite(RAM_CE2, LOW);         // Force the RAM in HiZ (CE2 = LOW)
-    DDRA = 0xFF;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as output
-    PORTA = INC_HL;                     // Write "INC(HL)" opcode on data bus
-    pulseClock(2);                      // Execute T2 and T3 cycles of M1
-    DDRA = 0x00;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as input... 
-    PORTA = 0xFF;                       // ...with pull-up
-    digitalWrite(RAM_CE2, HIGH);        // Enable the RAM again (CE2 = HIGH)
-    pulseClock(3);                      // Execute all the remaining T cycles
-}
-
-// ------------------------------------------------------------------------------
-
-void loadHL(word value)
-// Load "value" word into the HL registers inside the Z80 CPU, using the "LD HL,nn" instruction.
-// In the following "T" are the T-cycles of the Z80 (See the Z80 datashet).
-{
-    // Execute the LD dd,nn instruction (T = 4+3+3), with dd = HL and nn = value. See the Z80 datasheet and manual.
-    // After the execution of this instruction the word "value" (16bit) is loaded into HL.
-    pulseClock(1);                      // Execute the T1 cycle of M1 (Opcode Fetch machine cycle)
-    digitalWrite(RAM_CE2, LOW);         // Force the RAM in HiZ (CE2 = LOW)
-    DDRA = 0xFF;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as output
-    PORTA = LD_HLnn;                    // Write "LD HL, n" opcode on data bus
-    pulseClock(2);                      // Execute T2 and T3 cycles of M1
-    DDRA = 0x00;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as input... 
-    PORTA = 0xFF;                       // ...with pull-up
-    pulseClock(2);                      // Complete the execution of M1 and execute the T1 cycle of the following 
-                                        // Memory Read machine cycle
-    DDRA = 0xFF;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as output
-    PORTA = lowByte(value);             // Write first byte of "value" to load in HL
-    pulseClock(3);                      // Execute the T2 and T3 cycles of the first Memory Read machine cycle
-                                        // and T1, of the second Memory Read machine cycle
-    PORTA = highByte(value);            // Write second byte of "value" to load in HL
-    pulseClock(2);                      // Execute the T2 and T3 cycles of the second Memory Read machine cycle                                    
-    DDRA = 0x00;                        // Configure Z80 data bus D0-D7 (PA0-PA7) as input... 
-    PORTA = 0xFF;                       // ...with pull-up
-    digitalWrite(RAM_CE2, HIGH);        // Enable the RAM again (CE2 = HIGH)
-}
-
-// ------------------------------------------------------------------------------
-// Reset the Z80 CPU using single pulses clock
-// ------------------------------------------------------------------------------
-void singlePulsesResetZ80()
-{
-    digitalWrite(RESET_, LOW);          // Set RESET_ active
-    pulseClock(6);                      // Generate twice the needed clock pulses to reset the Z80
-    digitalWrite(RESET_, HIGH);         // Set RESET_ not active
-    pulseClock(2);                      // Needed two more clock pulses after RESET_ goes HIGH
-}
-
-
-// ------------------------------------------------------------------------------
-// SD Disk routines (FAT16 and FAT32 filesystems supported) using the PetitFS library.
-// For more info about PetitFS see here: http://elm-chan.org/fsw/ff/00index_p.html
-// ------------------------------------------------------------------------------
-
-
-// ------------------------------------------------------------------------------
-// Mount a volume on SD: 
-// *  "fatFs" is a pointer to a FATFS object (PetitFS library)
-// The returned value is the resulting status (0 = ok, otherwise see printErrSD())
-// ------------------------------------------------------------------------------
-byte mountSD(FATFS* fatFs)
-{
-    return pf_mount(fatFs);
-}
-
-// ------------------------------------------------------------------------------
-// Open an existing file on SD:
-// *  "fileName" is the pointer to the string holding the file name (8.3 format)
-// The returned value is the resulting status (0 = ok, otherwise see printErrSD())
-// ------------------------------------------------------------------------------
-byte openSD(const char* fileName)
-{
-    return pf_open(fileName);
-}
-
-// ------------------------------------------------------------------------------
-// Read one "segment" (32 bytes) starting from the current sector (512 bytes) of 
-// the opened file on SD:
-// *  "BuffSD" is the pointer to the segment buffer;
-// *  "numReadBytes" is the pointer to the variables that store the number of 
-//    read bytes;
-//     if < 32 (including = 0) an EOF was reached).
-// The returned value is the resulting status (0 = ok, otherwise see printErrSD())
-//
-// NOTE1: Each SD sector (512 bytes) is divided into 16 segments (32 bytes each); 
-//        to read a sector you need to
-//        to call readSD() 16 times consecutively
-//
-// NOTE2: Past current sector boundary, the next sector will be pointed. So to 
-//        read a whole file it is sufficient 
-//        call readSD() consecutively until EOF is reached
-// ------------------------------------------------------------------------------
-byte readSD(void* buffSD, byte* numReadBytes)
-{
-    UINT  numBytes;
-    byte  errcode;
-    errcode = pf_read(buffSD, 32, &numBytes);
-    *numReadBytes = (byte) numBytes;
-    return errcode;
-}
-
-// ------------------------------------------------------------------------------
-// Write one "segment" (32 bytes) starting from the current sector (512 bytes) of the opened file on SD:
-// *  "BuffSD" is the pointer to the segment buffer;
-// *  "numWrittenBytes" is the pointer to the variables that store the number of written bytes;
-//     if < 32 (including = 0) an EOF was reached.
-// The returned value is the resulting status (0 = ok, otherwise see printErrSD())
-//
-// NOTE1: Each SD sector (512 bytes) is divided into 16 segments (32 bytes each); to write a sector you need to
-//        to call writeSD() 16 times consecutively
-//
-// NOTE2: Past current sector boundary, the next sector will be pointed. So to write a whole file it is sufficient 
-//        call writeSD() consecutively until EOF is reached
-//
-// NOTE3: To finalize the current write operation a writeSD(NULL, &numWrittenBytes) must be called as last action
-// ------------------------------------------------------------------------------
-byte writeSD(void* buffSD, byte* numWrittenBytes)
-{
-    UINT  numBytes;
-    byte  errcode;
-    if (buffSD != NULL)
-    {
-        errcode = pf_write(buffSD, 32, &numBytes);
-    }
-    else
-    {
-        errcode = pf_write(0, 0, &numBytes);
-    }
-    *numWrittenBytes = (byte) numBytes;
-    return errcode;
-}
-
-// ------------------------------------------------------------------------------
-// Set the pointer of the current sector for the current opened file on SD:
-// *  "sectNum" is the sector number to set. First sector is 0.
-// The returned value is the resulting status (0 = ok, otherwise see printErrSD())
-//
-// NOTE: "secNum" is in the range [0..16383], and the sector addressing is 
-//       continuos inside a "disk file";
-//       16383 = (512 * 32) - 1, where 512 is the number of emulated tracks, 32 
-//       is the number of emulated sectors
-//
-// ------------------------------------------------------------------------------
-byte seekSD(word sectNum)
-{
-    return pf_lseek(((unsigned long) sectNum) << 9);
-}
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
-void printErrSD(byte opType, byte errCode, const char* fileName)
-{
-    if (errCode)
-    {
-        Serial.print("\r\nIOS: SD error ");
-        Serial.print(errCode);
-        Serial.print(" (");
-        
-        // See PetitFS implementation for the codes
-        switch (errCode)
-        {
-            case 1: Serial.print("DISK_ERR"); break;
-            case 2: Serial.print("NOT_READY"); break;
-            case 3: Serial.print("NO_FILE"); break;
-            case 4: Serial.print("NOT_OPENED"); break;
-            case 5: Serial.print("NOT_ENABLED"); break;
-            case 6: Serial.print("NO_FILESYSTEM"); break;
-            default: Serial.print("UNKNOWN"); 
-        }
-        Serial.print(" on ");
-        switch (opType)
-        {
-            case 0: Serial.print("MOUNT"); break;
-            case 1: Serial.print("OPEN"); break;
-            case 2: Serial.print("READ"); break;
-            case 3: Serial.print("WRITE"); break;
-            case 4: Serial.print("SEEK"); break;
-            default: Serial.print("UNKNOWN");
-        }
-        Serial.print(" operation");
-
-        if (fileName)
-        {
-            // Not a NULL pointer, so print file name too
-            Serial.print(" - File: ");
-            Serial.print(fileName);
-        }
-        Serial.println(")");
-    }
-}
-
-// ------------------------------------------------------------------------------
-// Wait a key to continue
-// ------------------------------------------------------------------------------
-void waitKey()
-{
-    while (Serial.available() > 0) Serial.read();   // Flush serial Rx buffer
-    Serial.println(F("IOS: Check SD and press a key to repeat\r\n"));
-    while(Serial.available() < 1);
-}
-
-// ------------------------------------------------------------------------------
-// Print the current Disk Set number and the OS name, if it is defined.
-// The OS name is inside the file defined in DS_OSNAME
-// ------------------------------------------------------------------------------
-void printOsName(byte currentDiskSet)
-{
-    Serial.print("Disk Set ");
-    Serial.print(currentDiskSet);
-    OsName[2] = currentDiskSet + 48;    // Set the Disk Set
-    openSD(OsName);                     // Open file with the OS name
-    readSD(bufferSD, &numReadBytes);    // Read the OS name
-    if (numReadBytes > 0)
-    {
-        // Print the OS name
-        Serial.print(" (");
-        Serial.print((const char *)bufferSD);
-        Serial.print(")");
-    }
-}
 
 // end of source file
